@@ -34,7 +34,7 @@ class Worker(threading.Thread):
 
             get_html = open(self.ID+'/'+self.broker+'.txt',encoding = "utf-8",mode = 'w')
             conn = http.client.HTTPSConnection("www.nvesto.com",timeout=10)
-            payload = "fromdate=2015-05-01&todate=2016-10-06&broker="+str(self.broker)
+            payload = "fromdate=2018-01-01&todate=2018-11-13&broker="+str(self.broker)
             headers = {
                 'content-type': "application/x-www-form-urlencoded",
                 'cache-control': "no-cache",
@@ -54,8 +54,8 @@ class Worker(threading.Thread):
                 data = data.decode("utf-8")
                 res_data = json.loads(data)
                 shop_list.write('\n')
-                StartDate = time.strptime("2015/05/01", "%Y/%m/%d")
-                EndDate = time.strptime("2016/10/06", "%Y/%m/%d")
+                StartDate = time.strptime("2018/01/01", "%Y/%m/%d")
+                EndDate = time.strptime("2018/11/13", "%Y/%m/%d")
                 StartDate = datetime.date(StartDate[0], StartDate[1], StartDate[2])
                 EndDate = datetime.date(EndDate[0], EndDate[1], EndDate[2])
                 # EndDate =  datetime.date(EndDate[0], EndDate[1], EndDate[2])
