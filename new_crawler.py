@@ -2,7 +2,7 @@
 # -*- coding: UTF-8 -*-
 
 import requests
-import HTMLParser
+from html.parser import HTMLParser
 import http.client
 import json
 import os
@@ -16,7 +16,7 @@ import csv
 
 brokers = []
 IDs=[]
-
+buffer2 = 0
 class Worker(threading.Thread):
     def __init__(self, queue,num):
         threading.Thread.__init__(self)
@@ -25,13 +25,12 @@ class Worker(threading.Thread):
         # self.broker = queue.get()[0]
         # self.ID = queue.get()[1]
     def run(self):
-        buffer = self.queue.get()
-        self.broker = buffer[0]
-        self.ID = buffer[1]
-        shop_list = open(self.ID+'.csv',encoding = "utf-8",mode = 'w',newline='')
-        print("被打開來")
-        while not self.queue.empty():
+        global buffer2 
 
+        while not self.queue.empty():
+            buffer = self.queue.get()
+            self.broker = buffer[0]
+            self.ID = buffer[1]
             get_html = open(self.ID+'/'+self.broker+'.txt',encoding = "utf-8",mode = 'w')
             conn = http.client.HTTPSConnection("www.nvesto.com",timeout=10)
             payload = "fromdate=2018-01-01&todate=2018-11-13&broker="+str(self.broker)
@@ -47,10 +46,13 @@ class Worker(threading.Thread):
             get_html.close()
             
             # 解析
-           
-            shop_list.write('Date'+','+'券商'+','+'buy'+','+'sell'+','+'buyPer'+','+'sellPer'+','+'netPer'+','+'buyWeek'+','+'sellWeek'+','+'netWeek'+','+'buyWeekPer'+','+'sellWeekPer'+','+'last_price'+','+'netWeekPer')
-            
+            shop_list = open(self.ID+'.csv',encoding = "utf-8",mode = 'a+',newline='')
+            #print("被打開來")
+            if buffer2 == 0:
+                shop_list.write('Date'+','+'券商'+','+'buy'+','+'sell'+','+'buyPer'+','+'sellPer'+','+'netPer'+','+'buyWeek'+','+'sellWeek'+','+'netWeek'+','+'buyWeekPer'+','+'sellWeekPer'+','+'last_price'+','+'netWeekPer')
+                buffer2 = 1
             try:
+               
                 data = data.decode("utf-8")
                 res_data = json.loads(data)
                 shop_list.write('\n')
@@ -84,7 +86,7 @@ class Worker(threading.Thread):
                         
                     StartDate = StartDate + RangeDate
 
-                shop_list.write('\n')
+                
                 print("complete ID: "+str(self.ID)+" broker: "+str(self.broker)+" Worker %d" % (self.num))
                 sys.stdout.flush()
             except Exception as e:
