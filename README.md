@@ -7,4 +7,7 @@ Just browse to ～/Applications/Python 3.6 and double-click Install Certificates
 就可以解決  
 
 ## 執行
-python3 new_crawler.py
+
+```
+$ python3 new_crawler.py
+```
